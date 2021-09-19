@@ -12,12 +12,11 @@ class Home extends CI_Controller
     public function index()
     {
 
-        // $data['provinsi'] = $this->data_provinsi(); //memanggil data provinsi
-        $data_cost = $this->data_cost(); //memanggil data provinsi
+        $data['provinsi'] = $this->data_provinsi(); //memanggil data provinsi
 
-        echo '<pre>';
-        print_r($data_cost);
-        echo '<pre>';
+        // echo '<pre>';
+        // print_r($data_cost);
+        // echo '<pre>';
 
 
 
@@ -65,22 +64,43 @@ class Home extends CI_Controller
 
     public function data_cost()
     {
-        // $kota_awal    = htmlspecialchars($this->input->post('kota_awal', true));
-        // $kota_tujuan    = htmlspecialchars($this->input->post('kota_tujuan', true));
-        // $kurir    = htmlspecialchars($this->input->post('kurir', true));
-        // $berat_barang    = htmlspecialchars($this->input->post('berat_barang', true));
+        $origin    = htmlspecialchars($this->input->post('kota_awal', true));
+        $destination = htmlspecialchars($this->input->post('kota_tujuan', true));
+        $courier    = htmlspecialchars($this->input->post('kurir', true));
+        $weight    = htmlspecialchars($this->input->post('berat_barang', true));
 
-        // $result     = call_curl('https://api.rajaongkir.com/starter/cost?key=fa49f24f8066436b03d51d12af6288f8' . '&origin=' . $kota_awal . 'destinatiion=' . $kota_tujuan . '&weight=' . $berat_barang . '&courier=' . $kurir . '&REQUEST=POST');
+        $result     = call_cost('https://api.rajaongkir.com/starter/cost', "origin=$origin&destination=$destination&weight=$weight&courier=$courier");
 
         // $result = json_decode($result, true);
 
-        // echo '<pre>';
         // print_r($result);
-        // echo '</pre>';
 
-        $cost = cost();
+        // $tarif = [];
+        foreach ($result as  $hasil) {
+            // print_r($hasil);
+            $data = [
+                "data1" => $hasil['results']
+            ];
 
-        return $cost;
+            foreach ($data as $hasil2) {
+                $data2 = [
+                    "data2" => $hasil2
+                ];
+
+                foreach ($data2 as $hasil3) {
+                    $data3 = [
+                        "data3" => $hasil3[0]
+                    ];
+
+                    foreach ($data3 as $hasil4) {
+                        $tarif = [
+                            "tarif" => $hasil4['costs']
+                        ];
+                        echo json_encode($tarif);
+                    }
+                }
+            }
+        }
     }
     //end
 }
